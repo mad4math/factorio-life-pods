@@ -716,18 +716,19 @@ function secondTickForPodActive(pod)
 
         pod.repair.health = pod.repair.health + gainedHP
     else
+        if pod.repair.health < CONFIG.POD_HEALTH_PER_POP * pod.alivePop then
+            for _, player in pairs(game.players) do
+                player.add_custom_alert(pod.repair, {type = "item", name = "life-pod-icon"}, "" .. pod.name .. " is taking damage ", true)
+            end
+                if recently_full_hp then
+                    game.play_sound({path = "alert-2-lifepods"})
+                end
+        end
         local damage = pod_damage_per_second
         pod.repair.damage(damage, game.forces.neutral, "laser") -- Need to pick a damage type to make pods not immune to. "laser" shouldn't ever hit them naturally.
     end
 
-    if pod.repair.health < CONFIG.POD_HEALTH_PER_POP * pod.alivePop then
-        for _, player in pairs(game.players) do
-            player.add_custom_alert(pod.repair, {type = "item", name = "life-pod-icon"}, "" .. pod.name .. " is taking damage ", true)
-        end
-            if recently_full_hp then
-                game.play_sound({path = "alert-2-lifepods"})
-            end
-    end
+
 end
 function tenSecondTickForPod(pod)
     if pod.alivePop <= 0 then return end
